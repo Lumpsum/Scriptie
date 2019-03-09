@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" integrity="sha384-WskhaSGFgHYWDcbwN70/dfYBj47jz9qbsMId/iRN3ewGhXQFZCSftd1LZCfmhktB" crossorigin="anonymous">
+    <link rel="stylesheet" href="{{ url_for('static',filename='style.css') }}">
+
+    <title>Fashion Suggestion</title>
+  </head>
+  <body >
+
+  <div class="container-fluid" style="background-color:#333A42; color: #F1ECE9">
+  <div class = "col text-center p-4">
+    <h1>Fashion Suggestion</h1>
+  </div>
+  </div>
+
+  <div class="container-fluid" style="background-color: #485058; color: #F1ECE9">
+  <div class="row">
+  <div class="col-1"></div>
+  <div class="col-10 text-center p-2">
+  <h3>Hi!</h3>
+  <p class="small">
+  Welcome to the application page for my thesis. By doing this, you help my tremedously with graduating and finalizing my thesis, so thanks in advance. The idea is to give a picture of yourself as input and the application will suggest three celebrities that are most similar to you showing photos of them and their clothing style. Below you can give a photo as input, which will neither be saved nor used for any other purpose. The photo should be a full body photo, from head to toe, of yourself, preferably with as least background as possible to improve the results. On the next page the three celebrities will be shown with a few pictures each and you can tell me which pictures you like, if you like any at all. After submitting those results, the process is done and you helped me get one step closer to graduating.
+  </p>
+  </div>
+  <div class="col-1"></div>
+  </div>
+  </div>
+
+  <div class="container-fluid" style="background-color: #485058; color: #F1ECE9">
+  <div class="row">
+  <div class="col-1"></div>
+  <div class="col-10 text-center p-2">
+  <h3>Hallo!</h3>
+  <p class="small">
+  Welkom bij de applicatie pagina voor mijn scriptie. Door dit in te vullen, helpt u me heel erg met afstuderen en afronden van m'n scriptie, dus alvast bedankt. Het idee is om een foto van uzelf te geven en de applicatie zal dan drie beroemdheden aanbevelen die het meest op u lijken met daarbij foto's van hun kledingstijl. Hieronder kunt u de foto uploaden, die voor geen ander doeleinde gebruikt zal worden of opgeslagen zal worden. Voor de beste resultaten is de foto van top tot teen met zo min mogelijk achtergrond of andere objecten. Op de pagina daarna worden de beroemdheden weergegeven met daarbij hun foto's waarbij u kunt aangeven welke u wel en niet leuk vindt. Daarna is het proces klaar en heeft u me geholpen om een stap dichter bij afstuderen te zijn.
+  </p>
+  </div>
+  <div class="col-1"></div>
+  </div>
+  </div>
+
+  <div class="container-fluid">
+  <div class="row" style="color: #333A42;">
+  <div class="col-6 text-center p-4">
+  <h4>
+  Example image<br/>
+  Voorbeeld afbeelding
+  </h4>
+  <img class="img-fluid mx-auto d-block p-2 img-thumbnail" src="{{ url_for('static',filename='img/example.jpg') }}" style="height:350px">
+  </div>
+  <div class="col-6 text-center p-4">
+  <img class="img-fluid mx-auto d-block p-2 img-thumbnail" src="" id="target" style="height:275px">
+  <form enctype="multipart/form-data" method="POST" id='form' onsubmit="return findCelebs()">
+  <input id="src" type="file"/>
+   <div class="form-group">
+  <label for="select1">Gender/Geslacht:</label>
+  <select class="form-control" id="gender">
+    <option value='male'>Male</option>
+    <option value='female'>Female</option>
+  </select>
+  </div> 
+  <input type="submit" value="Submit" class="btn btn-secondary"/>
+  </form>
+  </div>
+  </div>
+  </div>
+
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <!--<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>!-->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js" integrity="sha384-smHYKdLADwkXOn1EmN1qk/HfnUcbVRZyYmZ4qpPea6sjB/pTJ0euyQp0Mk8ck+5T" crossorigin="anonymous"></script>
+
+    <script type="text/javascript">
+      function showImage(src,target) {
+        var fr=new FileReader();
+        // when image is loaded, set the src of the image where you want to display it
+        fr.onload = function(e) { target.src = this.result; };
+        src.addEventListener("change",function() {
+          // fill fr with image data    
+          fr.readAsDataURL(src.files[0]);
+        });
+        }
+
+        var src = document.getElementById("src");
+        var target = document.getElementById("target");
+        showImage(src,target);
+    </script>
+    <script type="text/javascript">
+        function findCelebs() {
+          var $SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
+          var selectedFile = document.getElementById('src').files[0];
+          var e = document.getElementById("gender");
+          var strOption = e.options[e.selectedIndex].value;
+
+          $.ajax({
+            type: "POST",
+            contentType: false,
+            dataType: 'json',
+            processData: false,
+            url: $SCRIPT_ROOT + "/predict/"+strOption,
+            data: selectedFile,
+          success: function(d){
+            console.log(d['data']);
+            document.write(d['data']); 
+        }
+      });
+        return false
+    };
+    </script>
+  </body>
+</html>

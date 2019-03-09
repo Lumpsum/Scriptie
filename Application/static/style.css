@@ -1,0 +1,14 @@
+body {
+	background-color: #F1ECE9;
+	color: #333A42;
+	font-family: Tahoma, Verdana, Segoe, sans-serif;
+}
+
+.align-items-center {
+  -ms-flex-align: center!important;
+  align-items: center!important;
+}
+.d-flex {
+  display: -ms-flexbox!important;
+  display: flex!important;
+}
